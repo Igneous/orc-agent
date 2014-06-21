@@ -1,62 +1,10 @@
 package main
 
 import (
-	"io"
 	"os"
 	"log"
-	"fmt"
-	"net"
-	"bytes"
-	"io/ioutil"
-	"encoding/json"
 	"github.com/streadway/amqp"
 )
-
-func failOnError(err error, msg string) {
-	if err != nil {
-		log.Fatalf("%s: %s", msg, err)
-		panic(fmt.Sprintf("%s: %s", msg, err))
-	}
-}
-
-func getFilenames(dir string) ([]string, error) {
-  fis, err := ioutil.ReadDir(dir)
-  if err != nil {
-    return nil, err
-  }
-  res := make([]string, len(fis))
-  for i, fi := range fis {
-    res[i] = fi.Name()
-  }
-  return res, nil
-}
-
-func getInterfaceByName(name string) (*net.Interface) {
-  inter, err := net.InterfaceByName(name)
-  if err != nil {
-      panic("Unable to get interface by name")
-  }
-  return inter
-}
-
-func handleMsg(msg []byte) {
-  brd := bytes.NewReader(msg)
-  dec := json.NewDecoder(brd)
-  for {
-    var m Message
-    if err := dec.Decode(&m); err == io.EOF {
-      break
-    } else if err != nil {
-      failOnError(err, "Failed to decode message's json payload")
-    }
-    log.Printf("Handling with handler '%s'", m.Handler)
-  }
-
-}
-
-type Message struct {
-  Handler string `json:"handler"`
-}
 
 func main() {
 	conn, err := amqp.Dial("amqp://orc-agent:famc@10.10.10.10:5672/")
