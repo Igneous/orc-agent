@@ -1,12 +1,15 @@
 package main
 
 import (
-	"github.com/streadway/amqp"
-	"log"
+	"io"
 	"os"
+	"log"
 	"fmt"
 	"net"
+	"bytes"
 	"io/ioutil"
+	"encoding/json"
+	"github.com/streadway/amqp"
 )
 
 func failOnError(err error, msg string) {
@@ -29,11 +32,30 @@ func getFilenames(dir string) ([]string, error) {
 }
 
 func getInterfaceByName(name string) (*net.Interface) {
-    inter, err := net.InterfaceByName(name)
-    if err != nil {
-        panic("Unable to get interface by name")
+  inter, err := net.InterfaceByName(name)
+  if err != nil {
+      panic("Unable to get interface by name")
+  }
+  return inter
+}
+
+func handleMsg(msg []byte) {
+  brd := bytes.NewReader(msg)
+  dec := json.NewDecoder(brd)
+  for {
+    var m Message
+    if err := dec.Decode(&m); err == io.EOF {
+      break
+    } else if err != nil {
+      failOnError(err, "Failed to decode message's json payload")
     }
-    return inter
+    log.Printf("Handling with handler '%s'", m.Handler)
+  }
+
+}
+
+type Message struct {
+  Handler string `json:"handler"`
 }
 
 func main() {
@@ -79,13 +101,14 @@ func main() {
 		for d := range msgs {
       counter = counter + 1
 			log.Printf("[%d] Received a message: %s", counter, d.Body)
+      handleMsg(d.Body)
 			// done <- true
 		}
 	}()
 
 	log.Printf(" [*] Waiting for messages on %q. To exit press CTRL+C", mac)
 	<-done
-	log.Printf("Done")
+	//log.Printf("Done")
 
 	os.Exit(0)
 }
