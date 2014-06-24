@@ -3,19 +3,12 @@ package main
 import (
 	"os"
 	"log"
-	"github.com/streadway/amqp"
 )
 
 func main() {
-	conn, err := amqp.Dial("amqp://orc-agent:famc@10.10.10.10:5672/")
-	failOnError(err, "Failed to connect to RabbitMQ")
-	defer conn.Close()
-
-	ch, err := conn.Channel()
-	failOnError(err, "Failed to open a channel")
-	defer ch.Close()
-
-  mac := getInterfaceByName("eth0").HardwareAddr.String()
+  conn := amqpConnect("amqp://orc-agent:famc@10.10.10.10:5672/")
+  ch   := amqpGetChannel(conn)
+  mac  := getInterfaceByName("eth0").HardwareAddr.String()
 
 	q, err := ch.QueueDeclare(
 		mac,     // name
