@@ -2,7 +2,6 @@ package main
 
 import (
   "os"
-  "log"
 )
 
 func main() {
@@ -12,9 +11,7 @@ func main() {
 
   config := loadConfig("config.json")
   conn   := amqpConnect(config.Amqpurl)
-  //msgs_tw := amqpFollowQueue(conn, mac_two)
 
-  log.Printf(" [*] Waiting for messages on %q. To exit press CTRL+C", config.Queues)
   for msg := range merge(amqpFollowQueues(conn, config.Queues)) {
     handleMsg(msg)
   }

@@ -4,15 +4,15 @@ import (
   "sync"
 )
 
-func merge(cs ...<-chan []byte) <-chan []byte {
+func merge(cs []<-chan[]byte) <-chan []byte {
     var wg sync.WaitGroup
-    out := make(chan []byte)
+    out := make(chan[]byte, 10)
 
     // Start an output goroutine for each input channel in cs.  output
     // copies values from c to out until c is closed, then calls wg.Done.
-    output := func(c <-chan []byte) {
-        for n := range c {
-            out <- n
+    output := func(c <-chan[]byte) {
+        for i := range c {
+            out <- i
         }
         wg.Done()
     }

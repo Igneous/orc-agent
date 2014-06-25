@@ -1,6 +1,7 @@
 package main
 
 import (
+  "log"
   "github.com/streadway/amqp"
 )
 
@@ -45,6 +46,7 @@ func amqpSetupQueue(ch *amqp.Channel, queue string) (amqp.Queue) {
 func amqpRegisterConsumer(ch *amqp.Channel, queue amqp.Queue) <-chan amqp.Delivery {
   msgs, err := ch.Consume(queue.Name, "", true, false, false, false, nil)
   failOnError(err, "Failed to register a consumer")
+  log.Printf(" [amqpRegisterConsumer] Registered consumer for queue: %q", queue.Name)
   return msgs
 }
 
@@ -52,8 +54,9 @@ func amqpFollowQueue(conn *amqp.Connection, queue string) <-chan []byte {
   ch   := amqpSetupChannel(conn)
   q    := amqpSetupQueue(ch, queue)
   msgs := amqpRegisterConsumer(ch, q)
+  log.Printf(" [amqpFollowQueue] Following %q", q.Name)
 
-  out  := make(chan []byte)
+  out  := make(chan []byte, 10)
   go func() {
     for d := range msgs {
       out <- d.Body
@@ -64,11 +67,9 @@ func amqpFollowQueue(conn *amqp.Connection, queue string) <-chan []byte {
 }
 
 func amqpFollowQueues(conn *amqp.Connection, queues []string) []<-chan[]byte {
-  var chans []<-chan []byte
-  for i := range queues {
-    chans[i] = make(<-chan []byte)
-  }
+  chans := make([]<-chan[]byte, len(queues))
   for i, queue := range queues {
+    chans[i] = make(<-chan []byte, 10)
     chans[i] = amqpFollowQueue(conn, queue)
   }
   return chans

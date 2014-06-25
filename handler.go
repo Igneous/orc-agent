@@ -17,7 +17,8 @@ func handleMsg(msg []byte) {
     } else if err != nil {
       failOnError(err, "Failed to decode message's json payload")
     }
-    log.Printf("Handling with handler '%s'", m.Handler)
+    log.Printf("msg: '%s'", msg)
+    // log.Printf("Handling with handler '%s'", m.Handler)
   }
 
 }
