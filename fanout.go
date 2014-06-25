@@ -1,7 +1,7 @@
 package main
 
 import (
-	"sync"
+  "sync"
 )
 
 func merge(cs ...<-chan []byte) <-chan []byte {

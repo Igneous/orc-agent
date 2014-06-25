@@ -1,7 +1,7 @@
 package main
 
 import (
-	"github.com/streadway/amqp"
+  "github.com/streadway/amqp"
 )
 
 func amqpConnect(url string) (*amqp.Connection) {
@@ -21,14 +21,14 @@ func amqpSetupChannel(conn *amqp.Connection) (*amqp.Channel) {
 func amqpSetupQueue(ch *amqp.Channel, queue string) (amqp.Queue) {
   // TODO
   // We need to trap this error, since the queue may already be declared.
-	q, err := ch.QueueDeclare(
-		queue,   // name
-		false,   // durable
-		false,   // delete when usused
-		false,   // exclusive
-		false,   // noWait
-		nil,     // arguments
-	)
+  q, err := ch.QueueDeclare(
+    queue,   // name
+    false,   // durable
+    false,   // delete when usused
+    false,   // exclusive
+    false,   // noWait
+    nil,     // arguments
+  )
   failOnError(err, "Failed to declare a queue")
 
   err = ch.QueueBind(

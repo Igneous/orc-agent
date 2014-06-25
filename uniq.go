@@ -1,7 +1,7 @@
 package main
 
 import (
-	"net"
+  "net"
 )
 
 func getInterfaceByName(name string) (*net.Interface) {

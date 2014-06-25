@@ -2,7 +2,7 @@ package main
 
 import (
   "os"
-	"encoding/json"
+  "encoding/json"
 )
 
 type Agentconfig struct {

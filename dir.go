@@ -1,7 +1,7 @@
 package main
 
 import (
-	"io/ioutil"
+  "io/ioutil"
 )
 
 func getFilenames(dir string) ([]string, error) {
