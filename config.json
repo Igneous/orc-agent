@@ -1,0 +1,6 @@
+{
+  "Amqpurl": "amqp://orc-agent:famc@10.10.10.10:5672/",
+  "Stathost": "localhost"
+  "Handlerpath": "/usr/share/orc-agent/handlers/"
+  "Queues": [ "testqueue1", "testqueue2" ]
+}

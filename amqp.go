@@ -11,9 +11,65 @@ func amqpConnect(url string) (*amqp.Connection) {
   return conn
 }
 
-func amqpGetChannel(conn *amqp.Connection) (*amqp.Channel) {
+func amqpSetupChannel(conn *amqp.Connection) (*amqp.Channel) {
   ch, err := conn.Channel()
   failOnError(err, "Failed to open a channel")
   // defer ch.Close()
   return ch
+}
+
+func amqpSetupQueue(ch *amqp.Channel, queue string) (amqp.Queue) {
+  // TODO
+  // We need to trap this error, since the queue may already be declared.
+	q, err := ch.QueueDeclare(
+		queue,   // name
+		false,   // durable
+		false,   // delete when usused
+		false,   // exclusive
+		false,   // noWait
+		nil,     // arguments
+	)
+  failOnError(err, "Failed to declare a queue")
+
+  err = ch.QueueBind(
+    q.Name,       // queue name
+    "",           // routing key
+    "amq.direct", // exchange
+    false,        // noWait
+    nil,          // arguments
+  )
+  failOnError(err, "Failed to bind a queue")
+  return q
+}
+
+func amqpRegisterConsumer(ch *amqp.Channel, queue amqp.Queue) <-chan amqp.Delivery {
+  msgs, err := ch.Consume(queue.Name, "", true, false, false, false, nil)
+  failOnError(err, "Failed to register a consumer")
+  return msgs
+}
+
+func amqpFollowQueue(conn *amqp.Connection, queue string) <-chan []byte {
+  ch   := amqpSetupChannel(conn)
+  q    := amqpSetupQueue(ch, queue)
+  msgs := amqpRegisterConsumer(ch, q)
+
+  out  := make(chan []byte)
+  go func() {
+    for d := range msgs {
+      out <- d.Body
+    }
+    close(out)
+  }()
+  return out
+}
+
+func amqpFollowQueues(conn *amqp.Connection, queues []string) []<-chan[]byte {
+  var chans []<-chan []byte
+  for i := range queues {
+    chans[i] = make(<-chan []byte)
+  }
+  for i, queue := range queues {
+    chans[i] = amqpFollowQueue(conn, queue)
+  }
+  return chans
 }
