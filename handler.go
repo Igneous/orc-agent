@@ -19,7 +19,7 @@ type Message struct {
 func getHandlers(handlerdir string) []string {
   handlers, err := getFilenames(handlerdir)
   failOnError(err, "Could not find any handlers in handlerdir")
-  log.Printf("Found handlers: %q", handlers)
+  log.Printf("[getHandlers] Found handlers: %q", handlers)
   return handlers
 }
 
@@ -48,11 +48,9 @@ func checkHandlerExists(handlerdir string, handler string) (string, error) {
       s := []string{handlerdir, handler}
       sj := strings.Join(s, "")
       log.Printf("[checkHandlerExists] %q == %q is true, returning handlerpath of %q", h, handler, sj)
-      log.Printf("I got to the sj return.")
       return sj, nil
     }
   }
-  log.Printf("I got to the error return.")
   return "", errors.New("handler doesn't exist")
 }
 
@@ -64,13 +62,14 @@ func handleMsg(handlerdir string, msg []byte) {
     tmpfile, err := ioutil.TempFile(os.TempDir(), parsedmsg.Handler)
     failOnError(err, "Failed to create a tempfile")
     ioutil.WriteFile(tmpfile.Name(), msg, 0644)
-    log.Printf("wrote msg to %q", tmpfile.Name())
+    log.Printf("[handleMsg] wrote msg to %q", tmpfile.Name())
+    log.Printf("[handleMsg] running to '%s %s'", h, tmpfile.Name())
     cmd := exec.Command(h, tmpfile.Name())
     output, err = cmd.Output()
     if err != nil {
       log.Fatal(err)
     }
   }
-  log.Printf("[handleMsg:MSG] %q", msg)
-  log.Printf("[handleMsg:OUT] %q", output)
+  log.Printf("[handleMsg:MSG] %s", msg)
+  log.Printf("[handleMsg:OUT] %s", output)
 }

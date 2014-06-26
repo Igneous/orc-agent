@@ -1,0 +1,15 @@
+#!/usr/bin/env ruby
+require 'tempfile'
+require 'json'
+
+payload = JSON.parse(ARGF.read)
+attrfile = Tempfile.new('chef-attrs.json')
+begin
+  attrfile.write(payload['override_attributes'].to_json)
+  attrfile.close
+  puts `cat #{attrfile.path}`
+  puts system('sudo', 'chef-client', '-o', payload['run_list'], '-j', attrfile.path)
+ensure
+  attrfile.close
+  attrfile.unlink
+end

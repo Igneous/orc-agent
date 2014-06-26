@@ -46,7 +46,7 @@ func amqpSetupQueue(ch *amqp.Channel, queue string) (amqp.Queue) {
 func amqpRegisterConsumer(ch *amqp.Channel, queue amqp.Queue) <-chan amqp.Delivery {
   msgs, err := ch.Consume(queue.Name, "", true, false, false, false, nil)
   failOnError(err, "Failed to register a consumer")
-  log.Printf(" [amqpRegisterConsumer] Registered consumer for queue: %q", queue.Name)
+  log.Printf("[amqpRegisterConsumer] Registered consumer for queue: %q", queue.Name)
   return msgs
 }
 
@@ -54,7 +54,7 @@ func amqpFollowQueue(conn *amqp.Connection, queue string) <-chan []byte {
   ch   := amqpSetupChannel(conn)
   q    := amqpSetupQueue(ch, queue)
   msgs := amqpRegisterConsumer(ch, q)
-  log.Printf(" [amqpFollowQueue] Following %q", q.Name)
+  log.Printf("[amqpFollowQueue] Following %q", q.Name)
 
   out  := make(chan []byte, 10)
   go func() {
