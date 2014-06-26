@@ -6,10 +6,10 @@ import (
 )
 
 type Agentconfig struct {
-  Queues    []string
-  Amqpurl     string
-  Stathost    string
-  Handlerpath string
+  Queues   []string
+  Amqpurl    string
+  Stathost   string
+  Handlerdir string
 }
 
 func loadConfig(configfile string) (Agentconfig) {
