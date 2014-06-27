@@ -1,0 +1,3 @@
+misc/etc/init/orc-agent.conf etc/init/orc-agent.conf
+misc/etc/orc-agent/config.json etc/orc-agent/config.json
+misc/handlers/* usr/share/orc-agent/handlers/
