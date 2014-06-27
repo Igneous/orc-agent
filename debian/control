@@ -1,0 +1,16 @@
+Source: orc-agent
+Section: net
+Priority: extra
+Maintainer: Bucky Wolfe <bwolfe@franklinamerican.com>
+Build-Depends: debhelper (>= 8.0.0), golang-go, dh-golang (>= 1.1), golang-amqp
+Standards-Version: 3.9.2
+
+Package: orc-agent
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}, dpkg-dev
+Built-Using: ${misc:Built-Using}
+Description: amqp consumer, generic message handler for orchestration tasks
+
+Package: orc-agent-doc
+Architecture: all
+Description: documentation for orc-agent
