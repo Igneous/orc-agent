@@ -6,7 +6,12 @@ import (
 )
 
 func amqpConnect(url string) (*amqp.Connection) {
-  conn, err := amqp.Dial(url)
+  var cfg amqp.Config
+  cfg.Properties = amqp.Table {
+    "product": "orc-agent",
+    "version": "oh-so-alpha",
+    }
+  conn, err := amqp.DialConfig(url, cfg)
   failOnError(err, "Failed to connect to RabbitMQ")
   // defer conn.Close()
   return conn
