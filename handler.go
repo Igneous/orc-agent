@@ -46,7 +46,7 @@ func checkHandlerExists(handlerdir string, handler string) (string, error) {
     log.Printf("[checkHandlerExists] checking %q == %q", h, handler)
     if h == handler {
       s := []string{handlerdir, handler}
-      sj := strings.Join(s, "")
+      sj := strings.Join(s, "/")
       log.Printf("[checkHandlerExists] %q == %q is true, returning handlerpath of %q", h, handler, sj)
       return sj, nil
     }
