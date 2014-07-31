@@ -10,11 +10,11 @@ tqone  = ch.queue(ARGV.first)
 x  = ch.default_exchange
 
 msg =  {
-    handler:             'chef',
-    run_list:            'recipe[bogusname]',
-    override_attributes: {}
-  }
+  handler:             'chef',
+  run_list:            'recipe[chef-metal::nextranet]',
+  override_attributes: {}
+}
 
 puts "Sending #{msg.to_json} -> #{ARGV.first}"
-x.publish(msg.to_json,routing_key: tqone.name)
+x.publish(msg.to_json, routing_key: tqone.name)
 conn.close
