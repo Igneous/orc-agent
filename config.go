@@ -5,17 +5,17 @@ import (
   "encoding/json"
 )
 
-type Agentconfig struct {
+type agentconfig struct {
   Queues   []string
   Amqpurl    string
   Stathost   string
   Handlerdir string
 }
 
-func loadConfig(configfile string) (Agentconfig) {
+func loadConfig(configfile string) (agentconfig) {
   file, _ := os.Open(configfile)
   decoder := json.NewDecoder(file)
-  config  := Agentconfig{}
+  config  := agentconfig{}
   err     := decoder.Decode(&config)
   failOnError(err, "Failed to decode config")
   return config

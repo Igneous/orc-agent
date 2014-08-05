@@ -12,7 +12,7 @@ import (
   "encoding/json"
 )
 
-type Message struct {
+type message struct {
   Handler string `json:"handler"`
 }
 
@@ -23,11 +23,11 @@ func getHandlers(handlerdir string) []string {
   return handlers
 }
 
-func parseMsg(msg []byte) Message {
+func parseMsg(msg []byte) message {
   brd := bytes.NewReader(msg)
   dec := json.NewDecoder(brd)
 
-  var m Message
+  var m message
   for {
     if err := dec.Decode(&m); err == io.EOF {
       break
