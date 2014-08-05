@@ -7,8 +7,7 @@ Standards-Version: 3.9.2
 
 Package: orc-agent
 Architecture: any
-Depends: ${shlibs:Depends}, ${misc:Depends}, dpkg-dev
-Built-Using: ${misc:Built-Using}
+Depends: sudo
 Description: amqp consumer, generic message handler for orchestration tasks
 
 Package: orc-agent-doc
