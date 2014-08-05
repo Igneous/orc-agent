@@ -65,7 +65,11 @@ func handleMsg(handlerdir string, msg []byte) {
     log.Printf("[handleMsg] wrote msg to %q", tmpfile.Name())
     log.Printf("[handleMsg] running to '%s %s'", h, tmpfile.Name())
     cmd := exec.Command(h, tmpfile.Name())
-    output, err = cmd.Output()
+    stdoutpipe, err := cmd.StdoutPipe()
+    stderrpipe, err := cmd.StderrPipe()
+    go logCmdOutputStream(stdoutpipe)
+    go logCmdOutputStream(stderrpipe)
+    cmd.Run()
     if err != nil {
       log.Fatal(err)
     }
