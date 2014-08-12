@@ -1,3 +1,7 @@
+orc-agent (0.3) unstable; urgency=low
+
+  * Advanced queue configuration, can now configure exchanges/routing keys/etc
+  
 orc-agent (0.2) unstable; urgency=low
 
   * Add basic config (allows for queue enrollment, amqp server, handler conf)
