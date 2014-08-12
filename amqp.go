@@ -24,41 +24,49 @@ func amqpSetupChannel(conn *amqp.Connection) (*amqp.Channel) {
   return ch
 }
 
-func amqpSetupQueue(ch *amqp.Channel, queue string) (amqp.Queue) {
+func amqpSetupQueue(ch *amqp.Channel, queue queueconfig) (amqp.Queue) {
   // TODO
   // We need to trap this error, since the queue may already be declared.
   q, err := ch.QueueDeclare(
-    queue,   // name
-    false,   // durable
-    false,   // delete when usused
-    false,   // exclusive
-    false,   // noWait
-    nil,     // arguments
+    queue.Name,       // name
+    queue.Durable,    // durable
+    queue.AutoDelete, // delete when usused
+    queue.Exclusive,  // exclusive
+    queue.NoWait,     // noWait
+    nil,              // arguments
   )
   failOnError(err, "Failed to declare a queue")
 
   err = ch.QueueBind(
-    q.Name,       // queue name
-    "",           // routing key
-    "amq.direct", // exchange
-    false,        // noWait
-    nil,          // arguments
+    q.Name,         // queue name
+    queue.Key,      // routing key
+    queue.Exchange, // exchange
+    queue.NoWait,   // noWait
+    nil,            // arguments
   )
   failOnError(err, "Failed to bind a queue")
   return q
 }
 
-func amqpRegisterConsumer(ch *amqp.Channel, queue amqp.Queue) <-chan amqp.Delivery {
-  msgs, err := ch.Consume(queue.Name, "", true, false, false, false, nil)
+func amqpRegisterConsumer(ch *amqp.Channel, q queueconfig) <-chan amqp.Delivery {
+  msgs, err := ch.Consume(
+    q.Name,       // queue name
+    "",           // consumer
+    true,         // autoAck
+    q.Exclusive,  // exclusive
+    false,        // noLocal
+    q.NoWait,     // noWait
+    nil,          // arguments
+  )
   failOnError(err, "Failed to register a consumer")
-  log.Printf("[amqpRegisterConsumer] Registered consumer for queue: %q", queue.Name)
+  log.Printf("[amqpRegisterConsumer] Registered consumer for queue: %q", q.Name)
   return msgs
 }
 
-func amqpFollowQueue(conn *amqp.Connection, queue string) <-chan []byte {
+func amqpFollowQueue(conn *amqp.Connection, queue queueconfig) <-chan []byte {
   ch   := amqpSetupChannel(conn)
   q    := amqpSetupQueue(ch, queue)
-  msgs := amqpRegisterConsumer(ch, q)
+  msgs := amqpRegisterConsumer(ch, queue)
   log.Printf("[amqpFollowQueue] Following %q", q.Name)
 
   out  := make(chan []byte, 10)
@@ -71,7 +79,7 @@ func amqpFollowQueue(conn *amqp.Connection, queue string) <-chan []byte {
   return out
 }
 
-func amqpFollowQueues(conn *amqp.Connection, queues []string) []<-chan[]byte {
+func amqpFollowQueues(conn *amqp.Connection, queues []queueconfig) []<-chan[]byte {
   chans := make([]<-chan[]byte, len(queues))
   for i, queue := range queues {
     chans[i] = make(<-chan []byte, 10)

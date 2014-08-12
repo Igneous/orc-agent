@@ -1,6 +1,25 @@
 {
-  "Amqpurl": "amqp://orc-agent:famc@10.10.10.10:5672/",
+  "Amqpurl": "amqp://guest:guest@mq.your.com:5672/",
   "Stathost": "localhost",
   "Handlerdir": "/usr/share/orc-agent/handlers/",
-  "Queues": [ "testqueue1", "testqueue2" ]
+  "Queues": [
+    {
+      "name": "ip-172-23-25-50.your.com",
+      "exchange": "amq.direct",
+      "key": "",
+      "durable": true,
+      "autoDelete": false,
+      "exclusive": true,
+      "noWait": false
+    },
+    {
+      "name": "app1_web_prod",
+      "exchange": "amq.direct",
+      "key": "",
+      "durable": true,
+      "autoDelete": false,
+      "exclusive": false,
+      "noWait": false
+    }
+  ]
 }

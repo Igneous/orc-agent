@@ -6,10 +6,20 @@ import (
 )
 
 type agentconfig struct {
-  Queues   []string
+  Queues   []queueconfig
   Amqpurl    string
   Stathost   string
   Handlerdir string
+}
+
+type queueconfig struct {
+  Name        string
+  Exchange    string
+  Key         string
+  Durable     bool
+  AutoDelete  bool
+  Exclusive   bool
+  NoWait      bool
 }
 
 func loadConfig(configfile string) (agentconfig) {
