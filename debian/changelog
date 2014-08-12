@@ -2,6 +2,7 @@ orc-agent (0.3) unstable; urgency=low
 
   * Advanced queue configuration, can now configure exchanges/routing keys/etc
   
+ -- Bucky Wolfe <bwolfe@franklinamerican.com>  Tue, 12 Aug 2014 12:17:00 -0600
 orc-agent (0.2) unstable; urgency=low
 
   * Add basic config (allows for queue enrollment, amqp server, handler conf)
@@ -9,7 +10,7 @@ orc-agent (0.2) unstable; urgency=low
   * Add real-time handler logging
   * Chef handler improvements (actually works now)
 
- -- Bucky Wolfe <bwolfe@franklinamerican.com>  Fri, 27 Jun 2014 13:08:52 -0600
+ -- Bucky Wolfe <bwolfe@franklinamerican.com>  Tue, 5 Aug 2014 15:37:00 -0600
 orc-agent (0.1) unstable; urgency=low
 
   * Initial release
